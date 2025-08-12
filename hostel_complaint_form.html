@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Hostel Complaint Form</title>
+  <style>
+    :root{--bg:#f6f8fb;--card:#ffffff;--accent:#1d4ed8;--muted:#6b7280}
+    body{font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:var(--bg); margin:0; padding:24px; display:flex; align-items:center; justify-content:center; min-height:100vh}
+    .card{background:var(--card); width:100%; max-width:700px; border-radius:12px; box-shadow:0 8px 30px rgba(15,23,42,0.06); padding:26px}
+    .institute-heading{text-align:center; font-size:18px; font-weight:bold; color:#111827; margin-bottom:10px;}
+    h1{margin:0 0 8px; font-size:20px; text-align:center;}
+    p.lead{margin:0 0 18px; color:var(--muted); text-align:center;}
+    form{display:grid; gap:12px}
+    label{font-size:13px; color:#111827}
+    input[type=text], input[type=date], textarea{width:100%; padding:10px 12px; border:1px solid #e6e9ef; border-radius:8px; font-size:14px; box-sizing:border-box}
+    textarea{min-height:120px; resize:vertical}
+    .row{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    .actions{display:flex; gap:8px; align-items:center; margin-top:6px}
+    button{background:var(--accent); color:#fff; border:0; padding:10px 14px; border-radius:8px; cursor:pointer}
+    button.secondary{background:#e5e7eb; color:#111}
+    .note{font-size:13px; color:var(--muted)}
+    .success{padding:10px 12px; background:#ecfdf5; color:#065f46; border-radius:8px}
+    .error{padding:10px 12px; background:#fff1f2; color:#7f1d1d; border-radius:8px}
+    small.hint{color:var(--muted)}
+  </style>
+</head>
+<body>
+  <main class="card" role="main">
+    <div class="institute-heading">INDIAN INSTITUTE OF MASS COMMUNICATION, NORTH-EAST REGIONAL CAMPUS</div>
+    <h1>Hostel Complaint / Request</h1>
+    <p class="lead">Submit your hostel complaint below. The form collects name, room number, complaint details and date.</p>
+
+    <div id="msg"></div>
+
+    <form id="complaintForm" method="post" action="#">
+      <div class="row">
+        <div>
+          <label for="name">Full name</label>
+          <input id="name" name="name" type="text" placeholder="e.g. Rahul Kumar" required>
+        </div>
+        <div>
+          <label for="room">Room number</label>
+          <input id="room" name="room" type="text" placeholder="e.g. A-203 / 402" required>
+        </div>
+      </div>
+
+      <div>
+        <label for="complaint">Complaint / Request</label>
+        <textarea id="complaint" name="complaint" placeholder="Describe the issue" required></textarea>
+      </div>
+
+      <div>
+        <label for="date">Date</label>
+        <input id="date" name="date" type="date" required>
+        <small class="hint">Default is today's date.</small>
+      </div>
+
+      <div class="actions">
+        <button type="submit">Submit Complaint</button>
+        <button type="button" class="secondary" id="clearBtn">Clear</button>
+        <div style="margin-left:auto;" class="note">Submissions are stored locally unless you configure a backend or Google Form.</div>
+      </div>
+    </form>
+  </main>
+
+  <script>
+    const dateInput = document.getElementById('date');
+    const today = new Date();
+    const y = today.getFullYear();
+    const m = String(today.getMonth()+1).padStart(2,'0');
+    const d = String(today.getDate()).padStart(2,'0');
+    dateInput.value = `${y}-${m}-${d}`;
+
+    const form = document.getElementById('complaintForm');
+    const msg = document.getElementById('msg');
+
+    function showMessage(type, text){
+      msg.innerHTML = '';
+      const div = document.createElement('div');
+      div.className = type === 'ok' ? 'success' : 'error';
+      div.textContent = text;
+      msg.appendChild(div);
+    }
+
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      const data = {
+        name: form.name.value.trim(),
+        room: form.room.value.trim(),
+        complaint: form.complaint.value.trim(),
+        date: form.date.value
+      };
+
+      if(!data.name || !data.room || !data.complaint || !data.date){
+        showMessage('err', 'Please fill all fields.');
+        return;
+      }
+
+      const key = 'hostel_complaints';
+      const prev = JSON.parse(localStorage.getItem(key) || '[]');
+      prev.push(Object.assign({id: Date.now()}, data));
+      localStorage.setItem(key, JSON.stringify(prev));
+
+      showMessage('ok', 'Complaint submitted successfully. Admin will review it soon.');
+      form.reset();
+      dateInput.value = `${y}-${m}-${d}`;
+    });
+
+    document.getElementById('clearBtn').addEventListener('click', function(){
+      if(confirm('Clear all fields?')) form.reset();
+      dateInput.value = `${y}-${m}-${d}`;
+    });
+  </script>
+</body>
+</html>
