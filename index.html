@@ -29,7 +29,6 @@
   <main class="card" role="main">
     <div class="institute-heading">INDIAN INSTITUTE OF MASS COMMUNICATION, NORTH-EAST REGIONAL CAMPUS</div>
     <h1>Hostel Complaint / Request</h1>
-    <p class="lead">Submit your hostel complaint below. The form collects name, room number, complaint details and date.</p>
 
     <div id="msg"></div>
 
@@ -93,7 +92,7 @@
     date: form.date.value
   };
 
-  fetch("https://script.google.com/macros/s/AKfycbwikp20Z-rTs6NQwH-cSrWRknXFCfO-HNgkOKylYZy8Uos96XY2ZWbgSCOIrOBFHCBk/exec", {
+  fetch("https://script.google.com/macros/s/AKfycbxc30mIPEaeD9HrKnn7IHkHgwU42DbC26b0GYr1VTQmCOPCt8RVVDtuhLIA0BDWw-Xm/exec", {
     method: "POST",
     body: JSON.stringify(data),
     headers: { "Content-Type": "application/json" }
